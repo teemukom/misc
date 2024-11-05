@@ -1,0 +1,71 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dataCollectionRules_D4SQL_e63a160a09464be580d2beb598bfdeda_dcr_name": {
+            "defaultValue": "dcr-dfcsql",
+            "type": "String"
+        },
+        "workspaces_la_epactest_sdc_externalid": {
+            "defaultValue": "/subscriptions/92a5b306-3808-4f53-854e-75cbb3db24ee/resourceGroups/rg-test/providers/microsoft.operationalinsights/workspaces/la-epactest",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Insights/dataCollectionRules",
+            "apiVersion": "2021-04-01",
+            "name": "[parameters('dataCollectionRules_D4SQL_e63a160a09464be580d2beb598bfdeda_dcr_name')]",
+            "location": "westeurope",
+            "tags": {
+                "createdBy": "MicrosoftDefenderForSQL"
+            },
+            "properties": {
+                "description": "Data collection rule for Microsoft Defender for SQL. Deleting this rule will break the detection of security vulnerabilities.",
+                "dataSources": {
+                    "extensions": [
+                        {
+                            "streams": [
+                                "Microsoft-DefenderForSqlAlerts",
+                                "Microsoft-DefenderForSqlLogins",
+                                "Microsoft-DefenderForSqlTelemetry",
+                                "Microsoft-DefenderForSqlScanEvents",
+                                "Microsoft-DefenderForSqlScanResults",
+                                "Microsoft-SqlAtpStatus-DefenderForSql"
+                            ],
+                            "extensionName": "MicrosoftDefenderForSQL",
+                            "extensionSettings": {
+                                "enableCollectionOfSqlQueriesForSecurityResearch": false
+                            },
+                            "name": "MicrosoftDefenderForSQL"
+                        }
+                    ]
+                },
+                "destinations": {
+                    "logAnalytics": [
+                        {
+                            "workspaceResourceId": "[parameters('workspaces_la_epactest_sdc_externalid')]",
+                            "name": "LogAnalyticsDest"
+                        }
+                    ]
+                },
+                "dataFlows": [
+                    {
+                        "streams": [
+                            "Microsoft-DefenderForSqlAlerts",
+                            "Microsoft-DefenderForSqlLogins",
+                            "Microsoft-DefenderForSqlTelemetry",
+                            "Microsoft-DefenderForSqlScanEvents",
+                            "Microsoft-DefenderForSqlScanResults",
+                            "Microsoft-SqlAtpStatus-DefenderForSql"
+                        ],
+                        "destinations": [
+                            "LogAnalyticsDest"
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
+}
